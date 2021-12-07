@@ -12,7 +12,13 @@ import './css/main.css'
 import './css/main.less'
 
 import testMd from './test.md'
-console.logff(testMd)
+console.log(testMd)
+// Source Map
+// console.log111(111123)
+
+// 树摇 Tree Shanking
+import {add} from './math'
+console.log('33 + 22',add(33,22))
 
 const fn = () => {
   alert('hello world')

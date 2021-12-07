@@ -7,6 +7,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
+// 树摇
+const TerserPlugin = require('terser-webpack-plugin')
+
 // 引入自定义插件
 const MyPlugin = require('./plugin/MyPlugin');
 
@@ -14,7 +17,8 @@ module.exports = (env, argv) => {
   const config = {
     // 打包模式
     mode: "development",
-  
+    // 启用 Source Map 定位问题
+    devtool : 'source-map',
     // 入口文件
     // entry: "./src/index.js",
     // 多入口打包
@@ -35,6 +39,11 @@ module.exports = (env, argv) => {
 
     // 优化策略
     optimization: {
+      // Tree Shaking 标记未被使用的代码 
+      usedExports: true,
+      // Tree Shaking 删除 usedExports 标记的未使用的代码
+      minimize: true,
+      minimizer: [new TerserPlugin()],
       splitChunks: {
         chunks: 'all'
       }
@@ -301,9 +310,10 @@ module.exports = (env, argv) => {
 
   // 判断当前是否是生产环境打包
   if(env.production) {
-    config.mode = 'production',
+    config.mode = 'production';
     // 启用 Source Map 定位问题
-    config.devtool = 'source-map'
+    config.devtool = 'source-map';
+
     config.plugins = [
       new MiniCssExtractPlugin({
         // 指定打包后的css文件名
