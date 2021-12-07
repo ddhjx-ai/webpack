@@ -16,14 +16,28 @@ module.exports = (env, argv) => {
     mode: "development",
   
     // 入口文件
-    entry: "./src/index.js",
+    // entry: "./src/index.js",
+    // 多入口打包
+    entry: {
+      index: './src/index.js',
+      about: './src/about.js'
+    },
   
     // 出口配置
     output: {
       // 输出目录（输出目录必须是绝对路径）
       path: resolve(__dirname, "dist"),
       // 输出文件名称
-      filename: "main.js",
+      // filename: "main.js",
+      // 多入口打包，输出时需使用动态名称
+      filename: "[name].bundle.js",
+    },
+
+    // 优化策略
+    optimization: {
+      splitChunks: {
+        chunks: 'all'
+      }
     },
   
     // 模块配置
@@ -181,6 +195,22 @@ module.exports = (env, argv) => {
             // webpack5 文件后缀自动带有 .
             filename: "font/[name][ext]"
           }
+        },
+
+        // 自定义loader
+        {
+          test: /\.md$/i,
+          // use: './loader/markdown-loader',
+          use: [
+            'html-loader',
+            {
+              loader: './loader/markdown-loader',
+              options: {
+                size: 20
+              }
+            }
+            
+          ]
         }
       ],
     },
@@ -234,26 +264,19 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         // 指定打包后的文件名称
         filename: "index.html",
-        // 用来指定生成 html 的木板
+        // 用来指定生成 html 的模块
         template: "./src/index.ejs",
         // 指定 html 中使用的变量
         title: "webpack首页",
+        // 指定要加载的打包文件
+        chunks:['index']
       }),
       // 可以同时打包多个html
       new HtmlWebpackPlugin({
         filename: "about.html",
         template: "./src/index.ejs",
         title: "关于我们",
-        // html 压缩
-        /* minify: {
-          collapseWhitespace: true,
-          keepClosingSlash: true,
-          removeComments: true,
-          removeRedundantAttributes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          useShortDoctype: true,
-        }, */
+        chunks: ['about']
       }),
   
       // 直接将src下不需要特殊处理的文件，直接复制到输出目录中
@@ -279,6 +302,8 @@ module.exports = (env, argv) => {
   // 判断当前是否是生产环境打包
   if(env.production) {
     config.mode = 'production',
+    // 启用 Source Map 定位问题
+    config.devtool = 'source-map'
     config.plugins = [
       new MiniCssExtractPlugin({
         // 指定打包后的css文件名

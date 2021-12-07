@@ -29,7 +29,7 @@
     "html-webpack-plugin": "^5.5.0",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
-    "loader-utils": "^3.2.0",
+    "loader-utils": "^2.0.2",
     "marked": "^4.0.6",
     "mini-css-extract-plugin": "^2.4.5",
     "optimize-css-assets-webpack-plugin": "^6.0.1",
@@ -44,7 +44,9 @@
     "webpack-dev-server": "^3.11.3",
     "webpack-merge": "^5.8.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.6.0"
+  },
   "browserslist": [
     "last 1 version",
     "> 1%"
