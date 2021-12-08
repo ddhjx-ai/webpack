@@ -17,8 +17,27 @@ module.exports = (env, argv) => {
   const config = {
     // 打包模式
     mode: "development",
+
     // 启用 Source Map 定位问题
     devtool : 'source-map',
+
+    // 模块的解析规则
+    resolve:{
+      alias: {
+        // 指定路劲的别名
+        "@": resolve('src')
+      },
+      // 指定引入文件的后缀名（指定之后，再引入文件时，后缀名可以省略）
+      extensions: ['.js', '.json', '.less'],
+      // 指定模块默认加载的路径
+      modules: [resolve(__dirname, './node_modules'), 'node_modules']
+    },
+
+    // 排除打包依赖项 
+    externals:{ 
+      "jquery": 'jQuery'
+    },
+
     // 入口文件
     // entry: "./src/index.js",
     // 多入口打包
@@ -34,16 +53,21 @@ module.exports = (env, argv) => {
       // 输出文件名称
       // filename: "main.js",
       // 多入口打包，输出时需使用动态名称
-      filename: "[name].bundle.js",
+      // filename: "[name].bundle.js",
+
+      // hash缓存
+      filename: "[name].[hash].js",
     },
 
     // 优化策略
     optimization: {
+      // Tree Shaking sideEffects,检测代码是否有副作用
+      sideEffects: true,
       // Tree Shaking 标记未被使用的代码 
       usedExports: true,
       // Tree Shaking 删除 usedExports 标记的未使用的代码
-      minimize: true,
-      minimizer: [new TerserPlugin()],
+      /* minimize: true,
+      minimizer: [new TerserPlugin()], */
       splitChunks: {
         chunks: 'all'
       }
@@ -111,6 +135,8 @@ module.exports = (env, argv) => {
           use: {
             loader: "babel-loader",
             options: {
+              // 第二次构建时，会读取之前的缓存
+              cacheDirectory: true,
               presets: [
                 [
                   "@babel/preset-env", 
@@ -260,7 +286,10 @@ module.exports = (env, argv) => {
     plugins: [
       new MiniCssExtractPlugin({
         // 指定打包后的css文件名
-        filename: "css/[name].css",
+        // filename: "css/[name].css",
+
+        // hash 缓存
+        filename: "css/[name].[hash].css",
       }),
       new StylelintPlugin({
         // 指定需要进行格式校验的文件

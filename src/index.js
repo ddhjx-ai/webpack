@@ -4,21 +4,25 @@
 // polyfill会转译所有的js新语法，会占用较大内存
 // import '@babel/polyfill'
 import $ from 'jquery'
-import data from './data.json'
-// console.log(data)
+import data from '@/data.json'
+console.log(data)
 
 // 引入样式文件
 import './css/main.css'
-import './css/main.less'
+import './css/main'
 
 import testMd from './test.md'
 console.log(testMd)
 // Source Map
 // console.log111(111123)
 
-// 树摇 Tree Shanking
+// 树摇 Tree Shaking
 import {add} from './math'
 console.log('33 + 22',add(33,22))
+// 树摇 Tree Shaking sideEffects
+import './extend'
+console.log((2).pad(5))
+
 
 const fn = () => {
   alert('hello world')
